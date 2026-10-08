@@ -1,1 +1,152 @@
-Get-Content -Raw -Encoding UTF8 "D:\shadow player\web\share\index.html" | Set-Clipboard; "복사됨: " + (Get-Clipboard -Raw).Length + "자"
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shadow Player · 이 부분, 들어 봐</title>
+<meta name="description" content="친구가 보낸 노래의 그 부분">
+<meta property="og:title" content="이 부분, 들어 봐">
+<meta property="og:description" content="Shadow Player로 보낸 노래의 그 부분">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Noto+Sans+KR:wght@400;700;900&display=swap">
+<style>
+  /* One screen: the brush phrase, the song card with its part, then the ways to listen. */
+  :root {
+    color-scheme: dark;
+    --ink: #12060a;
+    --crimson: #e11d48;
+    --deep: #7f1d3a;
+    --rose: #fda4af;
+    --paper: #fff1f2;
+    --muted: #f1c5cd;
+    --line: #ffffff26;
+    --font-ui: "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+    --font-brush: "Nanum Brush Script", "Noto Sans KR", cursive;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: radial-gradient(120% 80% at 20% 0%, #e11d48 0%, #9f1239 45%, #3b0a18 100%) fixed, var(--ink);
+    color: var(--paper);
+    font-family: var(--font-ui);
+    display: flex; justify-content: center;
+  }
+  main { width: 100%; max-width: 440px; padding: 40px 20px calc(32px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 26px; }
+  .phrase { font-family: var(--font-brush); font-size: 3.4rem; line-height: 1.05; text-align: center; margin: 18px 0 4px; text-wrap: balance; }
+  .card { display: flex; gap: 16px; align-items: center; background: #00000038; border: 1px solid var(--line); border-radius: 22px; padding: 14px; }
+  .cover { width: 92px; height: 92px; border-radius: 14px; flex: none; background: linear-gradient(135deg, #5b2333, #1d0b11); display: grid; place-items: center; font-size: 2.4rem; color: var(--rose); overflow: hidden; }
+  .cover img { width: 100%; height: 100%; object-fit: cover; }
+  .meta { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+  .title { font-weight: 900; font-size: 1.15rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .artist { color: var(--muted); font-size: .92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .span { align-self: flex-start; background: var(--paper); color: var(--deep); font-weight: 900; font-size: .86rem; padding: 4px 12px; border-radius: 99px; font-variant-numeric: tabular-nums; }
+  .actions { display: flex; flex-direction: column; gap: 10px; }
+  a.btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; border-radius: 16px; font-weight: 700; font-size: 1rem; text-decoration: none; color: var(--paper); background: #ffffff1f; border: 1px solid var(--line); }
+  a.btn.main { background: var(--paper); color: #7a0f2a; border-color: transparent; font-size: 1.05rem; }
+  a.btn:focus-visible { outline: 3px solid var(--rose); outline-offset: 2px; }
+  .hint { color: var(--muted); font-size: .8rem; line-height: 1.6; text-align: center; margin: 0; }
+  .brand { text-align: center; letter-spacing: .5em; font-weight: 700; font-size: .78rem; color: #ffffffb0; margin-top: 8px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <p class="phrase" id="phrase">이 부분, 들어 봐</p>
+
+  <section class="card" aria-label="노래">
+    <div class="cover" id="cover">♪</div>
+    <div class="meta">
+      <div class="title" id="title">노래</div>
+      <div class="artist" id="artist"></div>
+      <div class="span" id="span" hidden></div>
+    </div>
+  </section>
+
+  <nav class="actions">
+    <a class="btn main" id="app" href="#">앱에서 듣기</a>
+    <a class="btn" id="web" href="#">브라우저에서 듣기</a>
+    <a class="btn" id="shadow" href="#" hidden>Shadow Player로 열기</a>
+  </nav>
+  <p class="hint" id="hint">앱이 열리지 않으면 오른쪽 위 ⋮ 에서 ‘외부 브라우저로 열기’를 눌러 주세요.</p>
+
+  <div class="brand">SHADOW PLAYER</div>
+</main>
+<script>
+  // The same fields as the KakaoTalk card's "Shadow Player로 열기":
+  // src (app package, empty = YouTube Music), k (video id / spotify:track:… / track id),
+  // t title, a artist, d duration, s start, e end; p = the card's phrase.
+  const q = new URLSearchParams(location.search);
+  const src = q.get('src') || '';
+  const key = q.get('k') || '';
+  const title = q.get('t') || '';
+  const artist = q.get('a') || '';
+  const start = parseInt(q.get('s') || '0', 10) || 0;
+  const end = parseInt(q.get('e') || '0', 10) || 0;
+  const phrase = q.get('p');
+
+  const YT_MUSIC = 'com.google.android.apps.youtube.music';
+  const SPOTIFY = 'com.spotify.music';
+  const android = /Android/i.test(navigator.userAgent);
+  const clock = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  const enc = encodeURIComponent;
+
+  if (phrase) document.getElementById('phrase').textContent = phrase;
+  document.getElementById('title').textContent = title || '노래';
+  document.getElementById('artist').textContent = artist;
+  if (end > start) {
+    const span = document.getElementById('span');
+    span.textContent = clock(start) + ' – ' + clock(end);
+    span.hidden = false;
+  }
+  if (title) document.title = title + ' · Shadow Player';
+
+  const videoId = !src && /^[\w-]{11}$/.test(key) ? key : null;
+  const spotifyId = key.startsWith('spotify:track:') ? key.slice('spotify:track:'.length) : null;
+  const words = (title + ' ' + artist).trim();
+
+  // Opens an https address in a given app on Android (Instagram's browser stays put otherwise),
+  // falling back to the web address when the app isn't there.
+  const inApp = (url, pkg, fallback) => {
+    if (!android) return url;
+    const u = new URL(url);
+    return 'intent://' + u.host + u.pathname + u.search + '#Intent;scheme=https;package=' + pkg +
+      ';S.browser_fallback_url=' + enc(fallback) + ';end';
+  };
+
+  let app, web, appLabel;
+  if (videoId) {
+    web = 'https://www.youtube.com/watch?v=' + videoId + '&t=' + start + 's';
+    app = inApp('https://music.youtube.com/watch?v=' + videoId + '&t=' + start, YT_MUSIC, web);
+    appLabel = 'YouTube Music 앱에서 듣기';
+    document.getElementById('cover').innerHTML = '';
+    const img = document.createElement('img');
+    img.src = 'https://i.ytimg.com/vi/' + videoId + '/hqdefault.jpg';
+    img.alt = '';
+    document.getElementById('cover').appendChild(img);
+  } else if (spotifyId) {
+    web = 'https://open.spotify.com/track/' + spotifyId;
+    app = inApp(web, SPOTIFY, web);
+    appLabel = 'Spotify 앱에서 듣기';
+  } else {
+    web = 'https://www.youtube.com/results?search_query=' + enc(words);
+    app = inApp('https://music.youtube.com/search?q=' + enc(words), YT_MUSIC, web);
+    appLabel = 'YouTube Music에서 찾아 듣기';
+  }
+  const appBtn = document.getElementById('app');
+  appBtn.href = app;
+  appBtn.textContent = appLabel;
+  document.getElementById('web').href = web;
+
+  // Shadow Player on Android: saves the part there (the same fields the app reads from KakaoTalk).
+  if (android && key && end > start) {
+    const fields = new URLSearchParams();
+    ['src', 'k', 't', 'a', 'd', 's', 'e'].forEach(n => fields.set(n, q.get(n) || ''));
+    const shadow = document.getElementById('shadow');
+    shadow.href = 'intent://part?' + fields.toString() + '#Intent;scheme=shadowplayer;package=com.shadowplayer.app;end';
+    shadow.hidden = false;
+  }
+  if (!android) document.getElementById('hint').hidden = true;
+</script>
+</body>
+</html>
+
