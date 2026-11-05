@@ -46,6 +46,13 @@
   a.btn:focus-visible { outline: 3px solid var(--rose); outline-offset: 2px; }
   .hint { color: var(--muted); font-size: .8rem; line-height: 1.6; text-align: center; margin: 0; }
   .brand { text-align: center; letter-spacing: .5em; font-weight: 700; font-size: .78rem; color: #ffffffb0; margin-top: 8px; }
+  /* Just the part, played here (YouTube songs): a button first, the player once it's tapped. */
+  .preview { display: flex; flex-direction: column; gap: 10px; }
+  button.listen { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 58px; width: 100%; border: 0; border-radius: 16px; font: inherit; font-weight: 900; font-size: 1.05rem; color: var(--paper); background: linear-gradient(90deg, #9f1239, #be3455 55%, #f2a0a6); cursor: pointer; }
+  button.listen:focus-visible { outline: 3px solid var(--rose); outline-offset: 2px; }
+  .frame { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: #000; border: 1px solid var(--line); }
+  .frame > * { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .note { color: var(--muted); font-size: .86rem; text-align: center; margin: 0; }
   [hidden] { display: none !important; }
 </style>
 </head>
@@ -60,6 +67,12 @@
       <div class="artist" id="artist"></div>
       <div class="span" id="span" hidden></div>
     </div>
+  </section>
+
+  <section class="preview" id="preview" hidden aria-label="이 부분 미리 듣기">
+    <button class="listen" id="listen" type="button">▶ 이 부분 듣기</button>
+    <div class="frame" id="frame" hidden><div id="player"></div></div>
+    <p class="note" id="note" hidden></p>
   </section>
 
   <nav class="actions">
@@ -140,13 +153,55 @@
   // Shadow Player on Android: saves the part there (the same fields the app reads from KakaoTalk).
   if (android && key && end > start) {
     const fields = new URLSearchParams();
-    ['src', 'k', 't', 'a', 'd', 's', 'e'].forEach(n => fields.set(n, q.get(n) || ''));
+    ['src', 'k', 't', 'a', 'd', 's', 'e', 'm'].forEach(n => fields.set(n, q.get(n) || ''));
     const shadow = document.getElementById('shadow');
     shadow.href = 'intent://part?' + fields.toString() + '#Intent;scheme=shadowplayer;package=com.shadowplayer.app;end';
     shadow.hidden = false;
   }
   if (!android) document.getElementById('hint').hidden = true;
+
+  // Just the part, here in the page: YouTube's player starts at s and stops at e (a link can only
+  // say where to start). Loaded on the tap, so it may play with sound. Some music videos may not be
+  // played on other sites: then it says so and the app button is the way.
+  if (videoId && end > start) {
+    const preview = document.getElementById('preview');
+    const listen = document.getElementById('listen');
+    const frame = document.getElementById('frame');
+    const note = document.getElementById('note');
+    listen.textContent = '▶ 이 부분 듣기 · ' + clock(start) + ' – ' + clock(end);
+    preview.hidden = false;
+    let player = null;
+    // Again: loaded afresh with its end, which a plain seek back would forget.
+    const fromStart = () => player.loadVideoById({ videoId, startSeconds: start, endSeconds: end });
+    window.onYouTubeIframeAPIReady = () => {
+      player = new YT.Player('player', {
+        videoId,
+        playerVars: { start, end, autoplay: 1, playsinline: 1, rel: 0, modestbranding: 1 },
+        events: {
+          onStateChange: e => {
+            if (e.data === YT.PlayerState.ENDED) {
+              listen.textContent = '↻ 다시 듣기 · ' + clock(start) + ' – ' + clock(end);
+              listen.hidden = false;
+            }
+          },
+          onError: () => {
+            frame.hidden = true;
+            listen.hidden = true;
+            note.textContent = '이 곡은 여기서 들을 수 없어요. 아래 버튼으로 앱에서 들어 주세요.';
+            note.hidden = false;
+          },
+        },
+      });
+    };
+    listen.addEventListener('click', () => {
+      listen.hidden = true;
+      frame.hidden = false;
+      if (player) { fromStart(); return; }
+      const api = document.createElement('script');
+      api.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(api);
+    });
+  }
 </script>
 </body>
 </html>
-
