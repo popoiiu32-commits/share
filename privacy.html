@@ -1,1 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shadow Player 개인정보처리방침</title>
+<meta name="description" content="Shadow Player 앱의 개인정보처리방침">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap">
+<style>
+  /* One readable column: headings, short paragraphs, lists. The share page's colors. */
+  :root {
+    color-scheme: dark;
+    --ink: #12060a;
+    --paper: #fff1f2;
+    --muted: #f1c5cd;
+    --rose: #fda4af;
+    --line: #ffffff26;
+    --font-ui: "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--ink); color: var(--paper); font-family: var(--font-ui); line-height: 1.75; }
+  main { max-width: 720px; margin: 0 auto; padding: 40px 20px calc(48px + env(safe-area-inset-bottom, 0px)); }
+  h1 { font-size: 1.7rem; font-weight: 900; margin: 0 0 6px; text-wrap: balance; }
+  .date { color: var(--muted); font-size: .9rem; margin: 0 0 28px; }
+  h2 { font-size: 1.15rem; font-weight: 900; margin: 34px 0 8px; color: var(--rose); }
+  p, li { font-size: 1rem; color: var(--paper); }
+  ul { padding-left: 1.2em; margin: 8px 0; }
+  li { margin: 6px 0; }
+  .box { background: #ffffff0f; border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 12px 0; }
+  a { color: var(--rose); }
+  a:focus-visible { outline: 3px solid var(--rose); outline-offset: 2px; }
+  hr { border: 0; border-top: 1px solid var(--line); margin: 40px 0 24px; }
+  .en p, .en li { font-size: .95rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Shadow Player 개인정보처리방침</h1>
+  <p class="date">시행일: 2026년 11월 15일</p>
 
+  <p>Shadow Player(이하 "앱")는 사용자가 듣는 노래에서 좋아하는 구간을 저장하고 반복해 들을 수 있게 해 주는 앱이에요. 앱은 회원 가입이나 로그인이 없고, 개발자가 운영하는 서버로 사용자의 개인정보를 보내지 않아요. 이 방침은 앱이 어떤 정보를 어디에서, 왜 다루는지 설명해요.</p>
+
+  <h2>1. 휴대폰 안에서만 다루는 정보</h2>
+  <p>아래 정보는 사용자의 휴대폰 안에서만 쓰이고, 개발자에게 전송되지 않아요.</p>
+  <ul>
+    <li><b>저장한 구간과 메모</b>: 곡 제목, 아티스트, 구간 시작·끝 시간, 사용자가 적은 메모. 앱을 지우면 함께 지워져요.</li>
+    <li><b>재생 중인 곡 정보 (알림 접근 권한)</b>: YouTube Music · Spotify · 멜론에서 재생 중인 곡의 제목, 아티스트, 재생 위치를 읽어 화면에 보여 주고 구간 반복에 써요. 알림 내용 자체는 읽거나 저장하지 않아요.</li>
+    <li><b>휴대폰 음악 파일 (음악 접근 권한)</b>: 사용자가 고른 폴더의 음악 파일을 목록에 보여 주고 재생해요.</li>
+    <li><b>소리 크기 (녹음 권한)</b>: '자동볼륨'을 켜면 재생 중인 소리의 크기만 측정해 볼륨을 맞춰요. <b>마이크로 녹음하지 않고</b>, 소리를 저장하거나 전송하지 않아요.</li>
+    <li><b>다른 앱 위에 표시 권한</b>: 저장 구간에서 다른 음악 앱의 곡을 이어서 열 때 써요. 화면 내용을 읽지 않아요.</li>
+  </ul>
+
+  <h2>2. 사용자가 직접 보낼 때만 나가는 정보</h2>
+  <ul>
+    <li><b>카카오톡 공유</b>: 사용자가 '카톡 보내기'를 누르면, 공유 카드 이미지와 곡 정보(제목, 아티스트, 구간 시간, 메모)가 카카오의 공유 서비스를 통해 전달돼요. 이 과정에는 카카오의 개인정보처리방침이 적용돼요.</li>
+    <li><b>이미지로 보내기</b>: 사용자가 고른 앱으로 카드 이미지와 링크가 전달돼요.</li>
+    <li><b>공유 페이지</b>: 받은 사람이 링크를 열면 GitHub Pages에 있는 공유 페이지가 열리고, 그 안에서 YouTube 플레이어로 구간을 들을 수 있어요. 이때 YouTube(Google)의 정책이 적용돼요.</li>
+    <li><b>백업 파일</b>: 설정 › 백업으로 만든 파일은 사용자가 고른 곳에만 저장돼요.</li>
+  </ul>
+
+  <h2>3. 자동으로 수집되는 정보</h2>
+  <ul>
+    <li><b>오류 진단 정보</b>: 앱이 비정상 종료되면 오류 위치, 기기 모델, 안드로이드 버전, 앱 버전 같은 진단 정보가 Google Firebase Crashlytics로 전송돼요. 앱 품질을 고치는 데만 쓰이고, 이름·연락처 같은 개인 정보는 포함되지 않아요.</li>
+    <li><b>앨범 이미지</b>: 곡 표지를 보여 주려고 YouTube 이미지 서버(i.ytimg.com)에서 이미지를 받아 와요.</li>
+  </ul>
+
+  <h2>4. 제3자 제공과 보관</h2>
+  <p>앱은 위에 적은 경우 말고는 정보를 제3자에게 팔거나 제공하지 않아요. 휴대폰 안의 정보는 앱을 지우면 사라지고, 오류 진단 정보는 Firebase의 보관 기간(최대 90일)에 따라 지워져요.</p>
+
+  <h2>5. 사용자의 선택</h2>
+  <ul>
+    <li>알림 접근, 음악 접근, 녹음, 다른 앱 위에 표시 권한은 휴대폰 설정에서 언제든 끌 수 있어요. 끄면 그 기능만 쓸 수 없어요.</li>
+    <li>저장한 구간은 앱에서 언제든 지울 수 있어요.</li>
+  </ul>
+
+  <h2>6. 어린이</h2>
+  <p>앱은 어린이를 대상으로 만들지 않았고, 어린이의 개인정보를 알면서 수집하지 않아요.</p>
+
+  <h2>7. 문의</h2>
+  <div class="box">
+    <p>개인정보에 관한 문의: <a href="mailto:skcptr13@gmail.com"><b>skcptr13@gmail.com</b></a></p>
+  </div>
+
+  <h2>8. 바뀔 때</h2>
+  <p>방침이 바뀌면 이 페이지에 새 시행일과 함께 알려 드려요. 앱에 광고나 유료 기능이 들어가면, 그와 관련된 내용도 여기에 먼저 반영할게요.</p>
+
+  <hr>
+  <section class="en" lang="en">
+    <h2>Summary in English</h2>
+    <ul>
+      <li>No accounts. The developer runs no server and receives no personal data.</li>
+      <li>Saved parts, memos and the current song's details (read through notification access from YouTube Music, Spotify and Melon) stay on the device.</li>
+      <li>The microphone permission is used only to measure playback loudness for auto volume; nothing is recorded, stored or sent.</li>
+      <li>KakaoTalk sharing, image sharing and the share page (GitHub Pages, with the YouTube player) send data only when the user shares.</li>
+      <li>Crash diagnostics (device model, Android and app version, stack trace) go to Google Firebase Crashlytics.</li>
+      <li>Contact: <a href="mailto:skcptr13@gmail.com">skcptr13@gmail.com</a></li>
+    </ul>
+  </section>
+</main>
+</body>
+</html>
